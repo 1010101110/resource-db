@@ -1,0 +1,29 @@
+{
+  "name": "resource-db",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@bootstrap-vue-next/nuxt": "^0.45.5",
+    "@nuxtjs/color-mode": "^4.0.1",
+    "better-sqlite3": "^12.10.0",
+    "bootstrap": "^5.3.8",
+    "bootstrap-vue-next": "^0.45.5",
+    "leaflet": "^1.9.4",
+    "nuxt": "^4.4.8",
+    "resend": "^6.12.4",
+    "sharp": "^0.35.1",
+    "vue": "^3.5.35",
+    "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/leaflet": "^1.9.21"
+  }
+}
