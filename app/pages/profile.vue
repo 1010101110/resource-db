@@ -3,7 +3,7 @@
     <BCard title="Your Profile" class="shadow-sm">
       <div class="d-flex align-items-center mb-4">
         <img
-          :src="user?.avatar_path ? `/avatars/${user.avatar_path}` : '/person.svg'"
+          :src="user?.avatar_path ? `/storage/avatars/${user.avatar_path}` : '/person.svg'"
           class="rounded-circle border"
           style="width: 80px; height: 80px; object-fit: cover;"
         />
@@ -16,6 +16,16 @@
       <hr />
 
       <BForm @submit.prevent="uploadAvatar">
+        <BAlert
+          v-model="showError"
+          variant="danger"
+          dismissible
+          class="mb-3"
+          @closed="errorMessage = ''"
+        >
+          {{ errorMessage }}
+        </BAlert>
+
         <BFormGroup label="Change Avatar" class="mb-3">
           <BFormFile
             v-model="file"
@@ -56,6 +66,11 @@ const { user, refreshUser, logout } = useAuth();
 const showDeleteModal = ref(false)
 const loading = ref(false)
 
+const errorMessage = ref('')
+const showError = computed({
+  get: () => errorMessage.value !== '',
+  set: (val) => { if (!val) errorMessage.value = '' }
+})
 
 function handleFileChange(event) {
   if(event?.files){
@@ -67,14 +82,21 @@ function handleFileChange(event) {
 async function uploadAvatar() {
   if (!file.value) return;
   uploading.value = true;
+  errorMessage.value = ''
 
   const formData = new FormData();
   formData.append('avatar', file.value);
 
-  await $fetch('/api/auth/avatar', {
-    method: 'POST',
-    body: formData
-  });
+  try{
+    await $fetch('/api/auth/avatar', {
+      method: 'POST',
+      body: formData
+    });
+
+    file.value = null;
+  }catch(error){
+    errorMessage.value = error.data
+  }
 
   uploading.value = false;
   refreshUser();
@@ -90,10 +112,10 @@ async function handleDelete() {
 
     if (res.success) {
       // 1. Clear local auth state
-      // (Your auth composable here, e.g., logout())
+      logout();
 
       // 2. Redirect to home page
-      await navigateTo('/')
+      await navigateTo('/');
 
       // 3. Show success toast (optional)
       alert("Account deleted successfully.")

@@ -27,3 +27,4 @@ logs
 public/cache
 public/avatars
 database.sqlite
+.storage

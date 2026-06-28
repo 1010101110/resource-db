@@ -11,9 +11,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid tile coordinates' })
   }
 
-  // 2. Define where this tile should live on your VPS
-  // We save them in /public/cache/tiles/... so they persist
-  const cacheDir = join(process.cwd(), 'public', 'cache', 'tiles', z, x)
+  // 2. Define where this tile should live
+  const cacheDir = join(process.cwd(), '.storage', 'cache', 'tiles', z, x)
   const filePath = join(cacheDir, file)
 
   // 3. Set the correct header so the browser knows it's an image

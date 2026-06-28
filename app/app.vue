@@ -10,7 +10,7 @@
       <BNavItem :to="user ? '/profile' : '/login'">
           <img
             v-if="user && user?.avatar_path"
-            :src="`/avatars/${user.avatar_path}`"
+            :src="`/storage/avatars/${user.avatar_path}`"
             alt="Profile"
             class="rounded-circle border"
             style="width: 30px; height: 30px; object-fit: cover;"
