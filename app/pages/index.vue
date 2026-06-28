@@ -85,15 +85,16 @@ let L = null
 const selectedCategory = ref('');
 
 const categoryOptions = [
-  { value: '', text: 'View All' },
-  { value: 'Healthcare', text: 'Healthcare / HRT' },
+  { value: '', text: 'Select a category...', disabled: true },
+  { value: 'Healthcare', text: 'HRT / Primary Care' },
   { value: 'Surgeon', text: 'Surgeon' },
   { value: 'Mental Health', text: 'Mental Health / Therapy' },
+  { value: 'Hair Removal', text: 'Hair removal' },
   { value: 'Support Group', text: 'Support Group' },
   { value: 'Legal Aid', text: 'Legal Aid / Name Change' },
   { value: 'Vendor', text: 'Vendor / Service' },
-  { value: 'Safe Space', text: 'Community / Org / Safe Space' },
-  { value: 'Other', text: 'Other' }
+  { value: 'Activity', text: 'Bar / Activity' },
+  { value: 'Org', text: 'Community / Org' },
 ];
 
 const applyFilter = () => {
