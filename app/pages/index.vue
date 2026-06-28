@@ -85,7 +85,7 @@ let L = null
 const selectedCategory = ref('');
 
 const categoryOptions = [
-  { value: '', text: 'Select a category...', disabled: true },
+  { value: '', text: 'View All' },
   { value: 'Healthcare', text: 'HRT / Primary Care' },
   { value: 'Surgeon', text: 'Surgeon' },
   { value: 'Mental Health', text: 'Mental Health / Therapy' },
