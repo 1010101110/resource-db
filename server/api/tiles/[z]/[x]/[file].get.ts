@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
     const response = await fetch(osmUrl, {
       headers: {
         // CRITICAL: OSM blocks requests without a custom User-Agent identifying your app
-        'User-Agent': 'TransResourceDB/1.0 (Contact: your-email@domain.com)'
+        'User-Agent': 'GenderCareMap.org/1.0 (Contact: admin@gendercaremap.org)'
       }
     })
 
