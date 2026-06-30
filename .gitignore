@@ -26,5 +26,5 @@ logs
 # cache
 public/cache
 public/avatars
-database.sqlite
+database.sqlite*
 .storage
