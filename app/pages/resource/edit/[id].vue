@@ -1,13 +1,13 @@
 <template>
   <div class="form-container">
     <h1>Edit Resource</h1>
-    <div v-if="errorMsg" class="error-box">{{ errorMsg }}</div>
-    <div v-if="successMsg" class="success-box">{{ successMsg }}</div>
+    <BAlert :model-value="!!errorMsg" variant="danger">{{ errorMsg }}</BAlert>
+    <BAlert :model-value="!!successMsg" variant="success">{{ successMsg }}</BAlert>
 
     <div v-if="fetching">Loading resource data...</div>
 
     <ResourceForm
-      v-else-if="!successMsg"
+      v-else
       :initialData="existingData"
       :loading="loading"
       submitLabel="Update Resource"
@@ -27,7 +27,10 @@ const loading = ref(false);
 const errorMsg = ref('');
 const successMsg = ref('');
 
-function handleError(msg) { errorMsg.value = msg; }
+function handleError(msg) {
+  successMsg.value = '';
+  errorMsg.value = msg;
+}
 
 // Fetch the existing resource data when the page loads
 onMounted(async () => {
@@ -46,6 +49,7 @@ onMounted(async () => {
 async function updateResource(payload) {
   loading.value = true;
   errorMsg.value = '';
+  successMsg.value = '';
 
   try {
     const res = await $fetch(`/api/resources/${resourceId}`, {
