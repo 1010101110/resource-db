@@ -5,27 +5,73 @@
     </div>
 
     <div v-else-if="resource">
-      <div id="resource-map" class="map-render-area mb-4 border rounded shadow-sm"></div>
-      <h1>{{ resource.name }}</h1>
-      <p>
-        <strong>address:</strong> {{ resource.address }}
-        <!-- <BButton
-          variant="outline-primary"
-          class="btn-small"
-          :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(resource.address)}`"
-          target="_blank"
-        >
-          Open in GMaps
-        </BButton> -->
-      </p>
-      <p><strong>category:</strong> {{ resource.category }}</p>
-      <p><strong>rating:</strong> {{ resource.average_rating > 0 ? resource.average_rating + '⭐' : 'no reviews' }}</p>
-      <p><strong>description:</strong><br>{{ resource.description }}</p>
-      <p><strong>website:</strong> <a :href="resource.website" target="_blank">{{ resource.website }}</a></p>
-      <p><strong>phone:</strong> {{ resource.phone }}</p>
+      <div class="resource-details-container">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h1 class="mb-0 fw-bold">{{ resource.name }}</h1>
+          <BBadge
+            :variant="resource.average_rating > 0 ? 'warning' : 'secondary'"
+            class="fs-6 text-dark"
+          >
+            {{ resource.average_rating > 0 ? `${resource.average_rating} ⭐` : 'No reviews' }}
+          </BBadge>
+        </div>
 
-      <BButton v-if="isLoggedIn" variant="secondary" class="mt-3" @click="clickEditResource(resource.id)">
-        Edit
+        <BBadge variant="info" class="mb-3 px-3 py-2">{{ resource.category }}</BBadge>
+
+        <!-- Map Section -->
+        <div id="resource-map" class="map-render-area mb-4 border rounded shadow-sm"></div>
+
+        <!-- Details Section -->
+        <div class="row g-4">
+          <!-- Left Column: Description -->
+          <div class="col-md-7">
+            <h5 class="text-muted border-bottom pb-2 mb-3">About</h5>
+            <p class="lh-lg" style="white-space: pre-wrap;">{{ resource.description }}</p>
+          </div>
+
+          <!-- Right Column: Contact & Location -->
+          <div class="col-md-5">
+            <div class="bg-body p-4 rounded shadow-sm border">
+
+              <!-- Address -->
+              <div class="mb-4">
+                <h6 class="text-muted mb-2">Location</h6>
+                <p class="mb-2 fw-medium">{{ resource.address }}</p>
+                <BButton
+                  variant="outline-primary"
+                  size="sm"
+                  class="w-100"
+                  :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(resource.address)}`"
+                  target="_blank"
+                >
+                  Open in Google Maps
+                </BButton>
+              </div>
+
+              <!-- Phone -->
+              <div class="mb-3" v-if="resource.phone">
+                <h6 class="text-muted mb-1">Phone</h6>
+                <a :href="`tel:${resource.phone}`" class="text-decoration-none fw-medium text-dark">
+                  {{ resource.phone }}
+                </a>
+              </div>
+
+              <!-- Website -->
+              <div class="mb-0" v-if="resource.website">
+                <h6 class="text-muted mb-1">Website</h6>
+                <a :href="resource.website" target="_blank" class="text-decoration-none text-truncate d-block">
+                  {{ resource.website }}
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <BButton v-if="isLoggedIn" variant="primary" class="mt-3" @click="clickEditResource(resource.id)">
+        Edit Resource
       </BButton>
 
       <hr class="my-5" />
@@ -126,23 +172,32 @@ const resource = computed(() => response.value?.data || response.value);
 const mapContainer = ref(null);
 let L = null;
 onMounted(async () => {
+  refreshMap();
+});
+
+async function refreshMap() {
   // Only initialize map if we have coordinates
   if (resource.value?.latitude && resource.value?.longitude) {
     L = (await import('leaflet')).default;
 
     // Create the map
-    const map = L.map('resource-map').setView([resource.value.latitude, resource.value.longitude], 15);
+    const map = L.map('resource-map', {scrollWheelZoom: false,}).setView([resource.value.latitude, resource.value.longitude], 15);
 
     L.tileLayer('/api/tiles/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Add a simple marker
-    L.marker([resource.value.latitude, resource.value.longitude]).addTo(map)
-      .bindPopup(`<b>${resource.value.name}</b>`);
+    const customMarker = L.divIcon({
+      className: 'custom-pin',
+      html: `<div class="pin-dot"></div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+    const marker = L.marker([resource.value.latitude, resource.value.longitude], { icon: customMarker })
+    marker.addTo(map)
   }
-});
+}
 
 async function clickEditResource(id) {
   if (isLoggedIn.value) {
@@ -235,5 +290,26 @@ const submitEdit = async (reviewId) => {
 .map-render-area {
   width: 100%;
   height: 300px; /* Smaller height for detail pages */
+}
+
+:deep(.custom-pin) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+:deep(.pin-dot) {
+  width: 24px;
+  height: 24px;
+  background-color: #8b5cf6; /* A nice purple color */
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  transition: transform 0.2s;
+}
+
+:deep(.pin-dot:hover) {
+  transform: scale(1.2);
+  background-color: #7c3aed;
 }
 </style>
