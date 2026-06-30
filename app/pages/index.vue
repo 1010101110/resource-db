@@ -27,6 +27,14 @@
       <span>Locating you and loading resources...</span>
     </div>
 
+    <div
+      v-if="isFetchingMap"
+      class="position-absolute top-0 start-50 translate-middle-y mt-3 badge bg-primary shadow"
+      style="z-index: 1002; pointer-events: none;"
+    >
+      Updating map...
+    </div>
+
     <!-- Zoom / Too Many Pins Warning -->
     <div
       v-if="showZoomWarning && !loading"
@@ -83,6 +91,7 @@ const { isLoggedIn } = useAuth()
 
 const resources = ref([])
 const loading = ref(true)
+const isFetchingMap = ref(false)
 const searchQuery = ref('')
 const searching = ref(false)
 
@@ -140,7 +149,7 @@ onBeforeUnmount(() => {
 async function fetchResourcesInView() {
   if (!mapInstance) return;
 
-  loading.value = true;
+  isFetchingMap.value = true;
   const bounds = mapInstance.getBounds();
 
   // Construct query parameters for the bounding box
@@ -161,7 +170,7 @@ async function fetchResourcesInView() {
   } catch (error) {
     console.error('Failed to fetch resources for current view:', error);
   } finally {
-    loading.value = false;
+    isFetchingMap.value = false;
   }
 }
 
@@ -222,6 +231,8 @@ async function initMap() {
   }).addTo(mapInstance)
 
   markerGroup = L.layerGroup().addTo(mapInstance);
+
+  loading.value = false;
 
   // Hook up the movement listener to fetch new data
   mapInstance.on('moveend zoomend', () => {
