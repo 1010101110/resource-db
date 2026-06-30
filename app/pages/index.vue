@@ -49,8 +49,8 @@
     </div>
 
     <ClientOnly>
-      <div v-if="isLoggedIn" class="map-filter-overlay position-absolute bottom-0 end-0 m-3 p-2 bg-body rounded shadow-sm">
-        <BButton @click="clickAddResource" variant="primary" class="btn-sm w-100">+ new resource</BButton><br>
+      <div v-if="isLoggedIn" class="map-filter-overlay position-absolute bottom-0 end-0 m-3 p-2 rounded">
+        <BButton @click="clickAddResource" class="btn-sm w-100">+ New resource</BButton><br>
       </div>
     </ClientOnly>
 
@@ -90,11 +90,13 @@ const categoryOptions = [
   { value: 'Surgeon', text: 'Surgeon' },
   { value: 'Mental Health', text: 'Mental Health / Therapy' },
   { value: 'Hair Removal', text: 'Hair removal' },
+  { value: 'Stylist', text: 'Stylist, Beautician' },
   { value: 'Support Group', text: 'Support Group' },
   { value: 'Legal Aid', text: 'Legal Aid / Name Change' },
+  { value: 'Housing', text: 'Housing' },
+  { value: 'Activity', text: 'Activity / Bar / Gathering' },
+  { value: 'Org', text: 'Community / Organization' },
   { value: 'Vendor', text: 'Vendor / Service' },
-  { value: 'Activity', text: 'Bar / Activity' },
-  { value: 'Org', text: 'Community / Org' },
 ];
 
 const applyFilter = () => {
@@ -424,7 +426,7 @@ async function clickAddResource() {
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
 }
 
-.location-search button {
+button {
   padding: 0.75rem 1.5rem;
   background-color: #8b5cf6;
   color: white;
@@ -436,11 +438,11 @@ async function clickAddResource() {
   transition: background-color 0.2s;
 }
 
-.location-search button:hover:not(:disabled) {
+button:hover:not(:disabled) {
   background-color: #7c3aed;
 }
 
-.location-search button:disabled {
+button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }

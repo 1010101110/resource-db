@@ -1,5 +1,14 @@
 <template>
   <BForm @submit.prevent="handleSubmit">
+
+    <BAlert
+      :model-value="true"
+      variant="primary"
+      >
+    Please focus on adding resources and services specifically tailored to the transgender community,<br>
+    rather than general businesses that are simply non-discriminatory.
+    </BAlert
+    >
     <BFormGroup label="Resource Name *" label-for="input-name" class="mb-3">
       <BFormInput id="input-name" v-model="form.name" type="text" required />
     </BFormGroup>
@@ -64,11 +73,13 @@ const categoryOptions = [
   { value: 'Surgeon', text: 'Surgeon' },
   { value: 'Mental Health', text: 'Mental Health / Therapy' },
   { value: 'Hair Removal', text: 'Hair removal' },
+  { value: 'Stylist', text: 'Stylist, Beautician' },
   { value: 'Support Group', text: 'Support Group' },
   { value: 'Legal Aid', text: 'Legal Aid / Name Change' },
+  { value: 'Housing', text: 'Housing' },
+  { value: 'Activity', text: 'Activity / Bar / Gathering' },
+  { value: 'Org', text: 'Community / Organization' },
   { value: 'Vendor', text: 'Vendor / Service' },
-  { value: 'Activity', text: 'Bar / Activity' },
-  { value: 'Org', text: 'Community / Org' },
 ];
 
 // If editing, populate the form with existing data
