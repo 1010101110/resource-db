@@ -124,7 +124,7 @@
                 </BButton>
               </div>
             </div>
-            <p class="mb-0 text-muted">{{ review.content }}</p>
+            <p class="mb-0 text-muted" style="white-space: pre-wrap;">{{ review.content }}</p>
           </div>
 
           <div v-else>
