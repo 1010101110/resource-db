@@ -27,6 +27,16 @@
       <span>Locating you and loading resources...</span>
     </div>
 
+    <!-- Zoom / Too Many Pins Warning -->
+    <div
+      v-if="showZoomWarning && !loading"
+      class="position-absolute top-50 start-50 translate-middle bg-dark text-white px-4 py-2 rounded-pill shadow text-center"
+      style="z-index: 1002; pointer-events: none; opacity: 0.9;"
+    >
+      <span class="fw-bold">{{ filteredResources.length }} resources found</span><br>
+      <small>Zoom in to view pins</small>
+    </div>
+
     <!-- Filter Control Overlay -->
     <div class="map-filter-overlay position-absolute top-0 end-0 m-3 p-2 bg-body rounded shadow-sm">
 
@@ -82,6 +92,10 @@ let mapInstance = null
 let markerGroup = null
 let L = null
 
+const showZoomWarning = ref(false)
+const MAX_VISIBLE_PINS = 100
+const MIN_ZOOM_LEVEL = 8
+
 const selectedCategory = ref('');
 
 const categoryOptions = [
@@ -98,6 +112,12 @@ const categoryOptions = [
   { value: 'Org', text: 'Community / Organization' },
   { value: 'Vendor', text: 'Vendor / Service' },
 ];
+
+const filteredResources = computed(() => {
+  return selectedCategory.value
+    ? resources.value.filter(r => r.category === selectedCategory.value)
+    : resources.value;
+});
 
 const applyFilter = () => {
   renderMarkers();
@@ -149,10 +169,16 @@ function renderMarkers() {
   if (!markerGroup || !L) return;
 
   markerGroup.clearLayers();
+  showZoomWarning.value = false;
 
-  const filteredResources = selectedCategory.value
-    ? resources.value.filter(r => r.category === selectedCategory.value)
-    : resources.value;
+  const currentZoom = mapInstance.getZoom();
+
+  // Trigger the warning if zoomed out too far OR too many pins
+  // (Only trigger if there is actually data to show)
+  if (filteredResources.value.length > 0 && (filteredResources.value.length > MAX_VISIBLE_PINS || currentZoom < MIN_ZOOM_LEVEL)) {
+    showZoomWarning.value = true;
+    return;
+  }
 
   const customMarker = L.divIcon({
     className: 'custom-pin',
@@ -161,7 +187,7 @@ function renderMarkers() {
     iconAnchor: [12, 12]
   });
 
-  filteredResources.forEach((resource) => {
+  filteredResources.value.forEach((resource) => {
     const marker = L.marker([resource.latitude, resource.longitude], { icon: customMarker })
 
     marker.bindTooltip(resource.name, {
